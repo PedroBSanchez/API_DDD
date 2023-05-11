@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Domain.Interfaces.InterfaceServices
 {
-    public interface IServiceMessage
+    public interface IServiceCar
     {
     }
 }

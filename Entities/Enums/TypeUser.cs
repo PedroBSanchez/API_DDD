@@ -9,8 +9,7 @@ namespace Entities.Enums
     public enum TypeUser
     {
         ND = 0,
-        MotorCycle = 1,
-        Car = 2
+        Driver = 1,
 
     }
 }
