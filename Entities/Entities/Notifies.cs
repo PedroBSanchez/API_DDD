@@ -31,7 +31,7 @@ namespace Entities.Entities
             {
                 Notifications.Add(new Notifies
                 {
-                    message = "Campo obrigatório",
+                    message = "Required field",
                     propertyName = propertyName
                 });
 

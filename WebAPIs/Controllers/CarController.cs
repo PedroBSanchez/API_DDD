@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Domain.Interfaces;
+using Domain.Interfaces.InterfaceServices;
 using Entities.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -18,10 +19,13 @@ namespace WebAPIs.Controllers
 
         private readonly ICar _ICar;
 
-        public CarController(IMapper IMapper, ICar ICar)
+        private readonly IServiceCar _ServiceCar;
+
+        public CarController(IMapper IMapper, ICar ICar, IServiceCar IServiceCar)
         {
             _IMapper = IMapper;
             _ICar = ICar;
+            _ServiceCar = IServiceCar;
 
         }
 
@@ -54,7 +58,8 @@ namespace WebAPIs.Controllers
             
 
             var carMap = _IMapper.Map<Car>(car);
-            await _ICar.Add(carMap);
+            //await _ICar.Add(carMap);
+            await _ServiceCar.Add(carMap);
 
             return carMap.Notifications;
 
@@ -67,10 +72,11 @@ namespace WebAPIs.Controllers
         [HttpPut("/api/Update")]
         public async Task<List<Notifies>> Upate(CarViewModel car)
         {
+            car.UserId = await ReturnLoggerUserId();
 
             var carMap = _IMapper.Map<Car>(car);
-            await _ICar.Update(carMap);
-
+            // await _ICar.Update(carMap);
+            await _ServiceCar.Update(carMap);
             return carMap.Notifications;
 
 
@@ -79,41 +85,51 @@ namespace WebAPIs.Controllers
 
         [Authorize]
         [Produces("application/json")]
-        [HttpDelete("/api/Delete")]
-        public async Task<List<Notifies>> Delete(CarViewModel car)
+        [HttpDelete("/api/Delete/{id}")]
+        public async Task<ActionResult> Delete(int id)
         {
 
-            var carMap = _IMapper.Map<Car>(car);
-            await _ICar.Delete(carMap);
-            return carMap.Notifications;
+
+
+            //var carMap = _IMapper.Map<Car>(car);
+            var deleteCar = await _ServiceCar.DeleteById(id);
+
+            if (!deleteCar)
+            {
+                return NotFound();
+            }
+            return Ok(deleteCar);
+            
 
 
         }
 
         [Authorize]
         [Produces("application/json")]
-        [HttpGet("/api/GetEntityById")]
-        public async Task<CarViewModel> GetEntityById(Car car)
+        [HttpGet("/api/GetEntityById/{id}")]
+        public async Task<CarViewModel> GetEntityById(int id)
         {
 
-            car = await _ICar.GetEntityById(car.Id);
+            Car car = await _ICar.GetEntityById(id);
             var carMap = _IMapper.Map<CarViewModel>(car);
             return carMap;
-           
-
-
+          
         }
 
 
         [Authorize]
         [Produces("application/json")]
-        [HttpDelete("/api/List")]
-        public async Task<List<CarViewModel>> List()
+        [HttpGet("/api/ListCustom")]
+        public async Task<ActionResult<List<Car>>> List()
         {
 
-            var cars = await _ICar.List();
-            var carMap = _IMapper.Map<List<CarViewModel>>(cars);
-            return carMap;
+            //var cars = await _ICar.List();
+            //var carMap = _IMapper.Map<List<CarViewModel>>(cars);
+            //return carMap;
+
+            List<Car> carList = await _ServiceCar.ListCars();
+
+            return Ok(carList);
 
 
 

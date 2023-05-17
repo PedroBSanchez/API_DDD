@@ -21,5 +21,43 @@ namespace Domain.Services
 
         }
 
+        public async Task Add(Car Object)
+        {
+
+            var isValidCarModel = Object.isValidStringProperty(Object.Model, "Model");
+            var isValaidCarYear = Object.isValidIntProperty(Object.Year, "Year");
+            
+            if (isValidCarModel && isValaidCarYear) { 
+        
+                await _ICar.Add(Object);
+            }
+
+        }
+
+        public async Task<bool> DeleteById(int id)
+        {
+
+
+            return await _ICar.DeleteById(id);
+        }
+
+        public async  Task<List<Car>> ListCars()
+        {
+
+            return await _ICar.ListCar();
+           
+        }
+
+        public async Task Update(Car Object)
+        {
+            var isValidCarModel = Object.isValidStringProperty(Object.Model, "Model");
+            var isValaidCarYear = Object.isValidIntProperty(Object.Year, "Year");
+
+            if (isValidCarModel && isValaidCarYear)
+            {
+
+                await _ICar.Update(Object);
+            }
+        }
     }
 }
