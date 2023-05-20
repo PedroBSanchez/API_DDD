@@ -76,6 +76,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
       });
 
 
+
 var config = new AutoMapper.MapperConfiguration(cfg =>
 {
     cfg.CreateMap<CarViewModel, Car>();
@@ -93,6 +94,14 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseCors(builder =>
+{
+    builder
+    .AllowAnyOrigin()
+    .AllowAnyMethod()
+    .AllowAnyHeader();
+});
 
 app.UseAuthentication();
 app.UseAuthorization();
