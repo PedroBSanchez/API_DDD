@@ -13,7 +13,7 @@ namespace Domain.Interfaces
     {
 
         //Task<List<Car>> ListCar(Expression<Func<Car, bool>> exCar);
-        Task<List<Car>> ListCar();
+        Task<List<Car>> ListCar(string filter, string value, string userId);
 
         Task<bool> DeleteById(int id);
 

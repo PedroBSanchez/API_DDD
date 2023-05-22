@@ -20,11 +20,36 @@ namespace Infrastructure.Repository.Repositories
             _OptionsBuilder = new DbContextOptions<ContextBase>();
         }
 
-        public async Task<List<Car>> ListCar()
+        public async Task<List<Car>> ListCar(string filter, string value, string userId)
         {
+             
+            var filterNumber = int.Parse(filter);
+
+            var modelSearch = "";
+            var nameSearch = "";
+            
+
+            switch (filterNumber)
+            {
+                case 1:
+                    modelSearch = value;
+                    break;
+
+                case 2:
+                    nameSearch = value;
+                    break;
+
+                default:
+                    modelSearch = value;
+                    break;
+            }
+
+
             using (var db = new ContextBase(_OptionsBuilder) )
             {
-                return await  db.Car.AsNoTracking().ToListAsync();
+
+                //AsNoTracking()
+                return await db.Car.Where(x => x.Model.Contains(modelSearch)).Where(x => x.Name.Contains(nameSearch)).Where(x => x.UserId == userId).ToListAsync();
             }
         }
 

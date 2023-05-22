@@ -13,7 +13,7 @@ namespace Domain.Interfaces.InterfaceServices
 
         Task Add(Car Object);
         Task Update(Car Object);
-        Task<List<Car>> ListCars();
+        Task<List<Car>> ListCars(string filter, string value, string userId);
         Task<bool> DeleteById(int id);
 
 

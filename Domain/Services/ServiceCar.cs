@@ -41,10 +41,10 @@ namespace Domain.Services
             return await _ICar.DeleteById(id);
         }
 
-        public async  Task<List<Car>> ListCars()
+        public async  Task<List<Car>> ListCars(string filter, string value, string userId)
         {
 
-            return await _ICar.ListCar();
+            return await _ICar.ListCar(filter, value, userId);
            
         }
 

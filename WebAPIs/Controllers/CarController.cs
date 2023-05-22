@@ -5,6 +5,7 @@ using Entities.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.ObjectPool;
 using WebAPIs.Models;
 
 namespace WebAPIs.Controllers
@@ -119,15 +120,27 @@ namespace WebAPIs.Controllers
 
         [Authorize]
         [Produces("application/json")]
-        [HttpGet("/api/ListCustom")]
-        public async Task<ActionResult<List<Car>>> List()
+        [HttpGet("/api/ListCustom/{filter}")]
+        public async Task<ActionResult<List<Car>>> List(string filter, [FromQuery] string? filterValue)
         {
+
+
+   
+
+            var value = "";
+
+            if (filterValue != null) { 
+                value = filterValue;
+            }
+
 
             //var cars = await _ICar.List();
             //var carMap = _IMapper.Map<List<CarViewModel>>(cars);
             //return carMap;
+            
+            var userId = await ReturnLoggerUserId();
 
-            List<Car> carList = await _ServiceCar.ListCars();
+            List<Car> carList = await _ServiceCar.ListCars(filter, value, userId);
 
             return Ok(carList);
 
