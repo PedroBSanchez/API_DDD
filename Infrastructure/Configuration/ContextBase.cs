@@ -40,7 +40,12 @@ namespace Infrastructure.Configuration
 
         public string GetConnectionString()
         {
-            return "Server=./;Database=DB_DDD;User Id=sa;Password=teste123";
+            var dbHost = Environment.GetEnvironmentVariable("DB_HOST");
+            var dbName = Environment.GetEnvironmentVariable("DB_NAME");
+            var dbPassword = Environment.GetEnvironmentVariable("DB_SA_PASSWORD");
+            var connectionString = $"Data Source={dbHost};Database={dbName};User ID=sa; Password={dbPassword}";
+
+            return connectionString;
         }
 
 

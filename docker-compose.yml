@@ -1,0 +1,44 @@
+version: '3.4'
+
+networks:
+   apiDDD:
+
+services:
+
+   sql_server:
+     image: mcr.microsoft.com/mssql/server:2017-latest
+     hostname: sql_server
+     container_name: sql_server
+     ports:
+        - "1433:1433"
+     environment:
+        - ACCEPT_EULA=Y
+        - SA_PASSWORD=Testapiddd2023@
+     networks:
+        - apiDDD
+
+   webapis:
+     image: ${DOCKER_REGISTRY-}webapis
+     build:
+       context: .
+       dockerfile: WebAPIs/Dockerfile
+     ports: 
+       - "5142:80"
+     depends_on:
+        - sql_server
+     environment:
+        - DB_HOST=sql_server
+        - DB_NAME=API_DDD
+        - DB_SA_PASSWORD=Testapiddd2023@
+     networks:
+        - apiDDD
+
+   client:
+     image: pedrobernardosanchez/apiddd:angular
+     container_name: angular_app
+     ports:
+       - "8080:80"
+     networks:
+       - apiDDD
+
+      

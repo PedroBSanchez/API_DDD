@@ -24,10 +24,14 @@ builder.Services.AddSwaggerGen();
 
 
 // ConfigServices
+var dbHost = Environment.GetEnvironmentVariable("DB_HOST");
+var dbName = Environment.GetEnvironmentVariable("DB_NAME");
+var dbPassword = Environment.GetEnvironmentVariable("DB_SA_PASSWORD");
+var connectionString = $"Data Source={dbHost};Database={dbName};User ID=sa; Password={dbPassword}";
+
 
 builder.Services.AddDbContext<ContextBase>(options =>
-                options.UseSqlServer(
-                    builder.Configuration.GetConnectionString("DefaultConnection")));
+                options.UseSqlServer(connectionString));
 
 builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<ContextBase>();
@@ -43,6 +47,7 @@ builder.Services.AddSingleton<ICar, RepositoryCar>();
 
 // Domain Service
 builder.Services.AddSingleton<IServiceCar, ServiceCar>();
+
 
 // JWT
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -95,6 +100,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+
 app.UseCors(builder =>
 {
     builder
@@ -108,5 +114,16 @@ app.UseAuthorization();
 
 app.MapControllers();
 app.UseSwaggerUI();
+
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+
+    var context = services.GetRequiredService<ContextBase>();
+    if (context.Database.GetPendingMigrations().Any())
+    {
+        context.Database.Migrate();
+    }
+}
 
 app.Run();
